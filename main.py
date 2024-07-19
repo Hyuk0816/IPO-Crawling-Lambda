@@ -1,6 +1,6 @@
 import json
 import pandas as pd
-import numpy as np
+from datetime import datetime
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
@@ -83,6 +83,19 @@ def handler(event=None, context=None):
     data[['start_date', 'end_date']] = data['date'].str.split('~', expand=True)
     # 필요에 따라 기존 date 컬럼을 삭제할 수도 있습니다.
     data.drop(columns=['date'], inplace=True)
+
+    # 현재 연도 가져오기
+    current_year = datetime.now().year
+
+    # start_date에 10:00 추가
+    data['start_date'] = data['start_date'].str.strip() + ' 10:00'
+
+    # end_date 수정: 원래 연도와 월, 일을 유지하고 현재 연도와 16:00 추가
+    data['end_date'] = data['end_date'].str.strip()
+    data['end_date'] = data['end_date'].apply(lambda x: f"{current_year}.{x[0:]} 16:00")
+
+    # 공백 제거
+    data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 
     # 임시 파일 경로 설정
     file_path = '/tmp/ipo_data.csv'
