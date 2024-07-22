@@ -81,7 +81,6 @@ def handler(event=None, context=None):
 
     # date 컬럼을 start_date와 end_date로 나누기
     data[['start_date', 'end_date']] = data['date'].str.split('~', expand=True)
-    # 필요에 따라 기존 date 컬럼을 삭제할 수도 있습니다.
     data.drop(columns=['date'], inplace=True)
 
     # 현재 연도 가져오기
@@ -92,10 +91,12 @@ def handler(event=None, context=None):
 
     # end_date 수정: 원래 연도와 월, 일을 유지하고 현재 연도와 16:00 추가
     data['end_date'] = data['end_date'].str.strip()
-    data['end_date'] = data['end_date'].apply(lambda x: f"{current_year}.{x[0:]} 16:00")
+    data['end_date'] = data.apply(lambda row: f"{row['start_date'][:4]}.{row['end_date']} 16:00", axis=1)
+   # data['end_date'] = data['end_date'].apply(lambda x: f"{current_year}.{x[0:]} 16:00")
 
     # 공백 제거
-    data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x)
+    data =  data.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
+   # data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 
     # 임시 파일 경로 설정
     file_path = '/tmp/ipo_data.csv'
