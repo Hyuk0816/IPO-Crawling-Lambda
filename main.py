@@ -38,7 +38,7 @@ def handler(event=None, context=None):
             detail = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[4]/tbody/tr[2]/td/table/tbody/tr[{0}]/td[1]/a'.format(i)
             detail_button = driver.find_element(By.XPATH, detail)
             detail_button.click()
-            time.sleep(1)
+            time.sleep(0.4)
 
             # 각 속성별 태그 정의
             nameTag = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[2]/tbody/tr[1]/td[2]/a/b/font'
