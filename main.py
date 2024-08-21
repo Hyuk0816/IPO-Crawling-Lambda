@@ -107,7 +107,7 @@ def handler(event=None, context=None):
 
     # S3 버킷에 업로드
     s3 = boto3.client('s3')
-    bucket = 'ipo-data-csv'
+    bucket = 'ipo-alarm-project'
 
     s3.upload_file(file_path, bucket, 'listing_shares.csv')
 
