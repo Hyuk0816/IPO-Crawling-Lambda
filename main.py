@@ -6,6 +6,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 import boto3
+import time
 
 def handler(event=None, context=None):
     chrome_options = webdriver.ChromeOptions()
