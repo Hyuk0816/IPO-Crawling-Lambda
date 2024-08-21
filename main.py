@@ -21,49 +21,58 @@ def handler(event=None, context=None):
     service = Service("/opt/chromedriver")
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
-    driver.get('https://www.38.co.kr/html/fund/index.htm?o=k')
+    driver.get('https://www.38.co.kr/html/fund/index.htm?o=nw')
 
-    name =  []
-    industry = []
-    representative = []
-    revenue = [] #매출액
-    netProfit = [] #순이익
-    totalOfferedShares = [] #총공모주식수
+    name = []
+    listingDate = []
+    currentPrice = []
+    changeFromPreviousDay = [] #전일비
+    offeringPrice  = [] #공모가
+    changeRateFromOfferingPrice  = [] #공모가대비 등락률
+    openingPrice = [] #시초가
+    openingPriceToOfferingPrice  = [] # 시초/공모)
+    closingPriceOnFirstDay = [] #첫날종가
 
     cnt = 0 # 15 번째 까지만 들고오자
-    while(cnt < 15):
-        for i in range(1, 31):
-            #각 공모주 별 디테일 페이지 조회
-            detail = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[4]/tbody/tr[2]/td/table/tbody/tr[{0}]/td[1]/a'.format(i)
-            detail_button = driver.find_element(By.XPATH, detail)
-            detail_button.click()
-            time.sleep(1)
+    while(cnt < 25):
+        for i in range(1, 21):
+            #다음 누르기 버튼
+            next_button = driver.find_element(By.LINK_TEXT, "[다음]")
 
-            # 각 속성별 태그 정의
-            nameTag = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[2]/tbody/tr[1]/td[2]/a/b/font'
-            industryTag = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[2]/tbody/tr[3]/td[2]'
-            representativeTag = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[2]/tbody/tr[4]/td[2]'
-            revenueTag = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[2]/tbody/tr[8]/td[2]'
-            netProfitTag = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[2]/tbody/tr[9]/td[2]'
-            totalOfferedSharesTag = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[4]/tbody/tr[1]/td[2]'
+            #각 속성별 태그 정의
+            nameTag = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[4]/tbody/tr[2]/td/table/tbody/tr[{0}]/td[1]'.format(i)
+            listingDateTag = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[4]/tbody/tr[2]/td/table/tbody/tr[{0}]/td[2]'.format(i)
+            currentPriceTag = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[4]/tbody/tr[2]/td/table/tbody/tr[{0}]/td[3]'.format(i)
+            changeFromPreviousDayTag = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[4]/tbody/tr[2]/td/table/tbody/tr[{0}]/td[4]'.format(i)
+            offeringPriceTag = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[4]/tbody/tr[2]/td/table/tbody/tr[{0}]/td[5]'.format(i)
+            changeRateFromOfferingPriceTag = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[4]/tbody/tr[2]/td/table/tbody/tr[{0}]/td[6]'.format(i)
+            openingPriceTag = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[4]/tbody/tr[2]/td/table/tbody/tr[{0}]/td[7]'.format(i)
+            openingPriceToOfferingPriceTag = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[4]/tbody/tr[2]/td/table/tbody/tr[{0}]/td[8]'.format(i)
+            closingPriceOnFirstDayTag = '/html/body/table[3]/tbody/tr/td/table[1]/tbody/tr/td[1]/table[4]/tbody/tr[2]/td/table/tbody/tr[{0}]/td[9]'.format(i)
 
             try:
-                nameText = driver.find_element(By.XPATH, nameTag)
-                industryText = driver.find_element(By.XPATH, industryTag)
-                representativeText = driver.find_element(By.XPATH, representativeTag)
-                revenueText = driver.find_element(By.XPATH, revenueTag)
-                netProfitText = driver.find_element(By.XPATH, netProfitTag)
-                totalOfferedSharesText = driver.find_element(By.XPATH, totalOfferedSharesTag)
+                nameText = driver.find_element(By.XPATH, nameTag).text
+                listingDateText = driver.find_element(By.XPATH, listingDateTag).text
+                currentPriceText = driver.find_element(By.XPATH, currentPriceTag).text
+                changeFromPreviousDayText = driver.find_element(By.XPATH, changeFromPreviousDayTag).text
+                offeringPriceText = driver.find_element(By.XPATH, offeringPriceTag).text
+                changeRateFromOfferingPriceText = driver.find_element(By.XPATH, changeRateFromOfferingPriceTag).text
+                openingPriceText = driver.find_element(By.XPATH, openingPriceTag).text
+                openingPriceToOfferingPriceText = driver.find_element(By.XPATH, openingPriceToOfferingPriceTag).text
+                closingPriceOnFirstDayText = driver.find_element(By.XPATH, closingPriceOnFirstDayTag).text
 
                 # 가져온 데이터 배열에 붙이기
-                name.append(nameText.text)
-                industry.append(industryText.text)
-                representative.append(representativeText.text)
-                revenue.append(revenueText.text)
-                netProfit.append(netProfitText.text)
-                totalOfferedShares.append(totalOfferedSharesText.text)
+                name.append(nameText)
+                listingDate.append(listingDateText)
+                currentPrice.append(currentPriceText)
+                changeFromPreviousDay.append(changeFromPreviousDayText)
+                offeringPrice.append(offeringPriceText)
+                changeRateFromOfferingPrice.append(changeRateFromOfferingPriceText)
+                openingPrice.append(openingPriceText)
+                openingPriceToOfferingPrice.append(openingPriceToOfferingPriceText)
+                closingPriceOnFirstDay.append(closingPriceOnFirstDayText)
 
-                driver.back()
+
             except NoSuchElementException:
                 break
 
@@ -75,28 +84,32 @@ def handler(event=None, context=None):
             break
 
     driver.close()
-    cols = ['name', 'industry', 'representative', 'revenue', 'netProfit', 'totalOfferedShares']
+    cols = ['name', 'listingDate', 'currentPrice', 'changeFromPreviousDay', 'offeringPrice', 'changeRateFromOfferingPrice', 'openingPrice', 'openingPriceToOfferingPrice','closingPriceOnFirstDay']
 
-    data = pd.DataFrame(columns = cols)
+    data = pd.DataFrame(columns=cols)
+
     data['name'] = name
-    data['industry'] = industry
-    data['representative'] = representative
-    data['revenue'] = revenue
-    data['netProfit'] = netProfit
-    data['totalOfferedShares'] = totalOfferedShares
+    data['listingDate'] = listingDate
+    data['currentPrice'] = currentPrice
+    data['changeFromPreviousDay'] = changeFromPreviousDay
+    data['offeringPrice'] = offeringPrice
+    data['changeRateFromOfferingPrice'] = changeRateFromOfferingPrice
+    data['openingPrice'] = openingPrice
+    data['openingPriceToOfferingPrice'] = openingPriceToOfferingPrice
+    data['closingPriceOnFirstDay'] = closingPriceOnFirstDay
 
     data =  data.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
 
 
     # 임시 파일 경로 설정
-    file_path = '/tmp/ipo_detail.csv'
+    file_path = '/tmp/listing_shares.csv'
     data.to_csv(file_path, index=False, encoding='utf-8-sig')
 
     # S3 버킷에 업로드
     s3 = boto3.client('s3')
     bucket = 'ipo-data-csv'
 
-    s3.upload_file(file_path, bucket, 'ipo_detail.csv')
+    s3.upload_file(file_path, bucket, 'listing_shares.csv')
 
     return {
         "statusCode": 200,
