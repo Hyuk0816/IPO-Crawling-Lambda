@@ -103,14 +103,6 @@ def handler(event=None, context=None):
     # listingDate의 /를 -로 변경
     data['listingDate'] = data['listingDate'].str.replace('/', '-', regex=False)
 
-    # %가 들어가는 모든 컬럼에서 % 제거
-    percentage_columns = ['changeFromPreviousDay', 'changeRateFromOfferingPrice', 'openingPriceToOfferingPrice']
-    for col in percentage_columns:
-        data[col] = data[col].str.replace('%', '', regex=False)
-        data[col] = data[col].str.replace('-', '', regex=False)
-
-    data = data.apply(lambda x: x.where(x.str.strip() != '', 0) if x.dtype == "object" else x)
-
     # 임시 파일 경로 설정
     file_path = '/tmp/listing_shares.csv'
     data.to_csv(file_path, index=False, encoding='utf-8-sig')
