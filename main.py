@@ -107,6 +107,9 @@ def handler(event=None, context=None):
     percentage_columns = ['changeFromPreviousDay', 'changeRateFromOfferingPrice', 'openingPriceToOfferingPrice']
     for col in percentage_columns:
         data[col] = data[col].str.replace('%', '', regex=False)
+        data[col] = data[col].str.replace('-', '', regex=False)
+
+    data = data.apply(lambda x: x.where(x.str.strip() != '', 0) if x.dtype == "object" else x)
 
     # 임시 파일 경로 설정
     file_path = '/tmp/listing_shares.csv'
